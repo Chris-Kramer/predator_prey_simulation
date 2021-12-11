@@ -1,5 +1,10 @@
-import parameters
 import advanced_menu as am
+import sys
+import os
+
+sys.path.append(os.path.join("..", "classes"))
+import parameters
+
 
 #---------- Sub-menu: configure world ----------
 def configure_world(sim_parameters):

@@ -1,7 +1,7 @@
 import os, sys
 
-sys.path.append(os.path.join(".."))
-
+sys.path.append(os.path.join("..", "..")) # For main menu
+sys.path.append(os.path.join("..", "classes")) # For classes
 import foxes_and_rabbits, reporting
 
 def reporting_menu(params, sim_results):

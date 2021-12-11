@@ -2,8 +2,10 @@ import os
 import sys
 import time
 
-# Adding the "Modules" folder from work directory
-sys.path.append(os.path.join("Modules"))
+# Look for modules in other folders 
+sys.path.append(os.path.join("Modules", "classes"))
+sys.path.append(os.path.join("Modules", "menus"))
+sys.path.append(os.path.join("Modules", "run"))
 
 # Importing the required modules for the script:
 import parameters, simulation, reporting, reporting_menu as rm, advanced_menu as am, config_menus as cm

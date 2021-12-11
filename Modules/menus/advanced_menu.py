@@ -1,9 +1,11 @@
-import parameters
 import os
 import sys
 import config_menus as cm
 
-sys.path.append(os.path.join(".."))
+sys.path.append(os.path.join("..", "..")) # For main menu
+sys.path.append(os.path.join("..", "classes")) # For classes
+
+import parameters
 import foxes_and_rabbits
 
 def advanced_menu(sim_parameters):
