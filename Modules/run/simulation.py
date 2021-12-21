@@ -6,7 +6,7 @@ import sys
 import random
 
 sys.path.append(os.path.join("..", "classes"))
-import parameters, visualiser, results as res, entities as ents
+import parameters, visualiser, results as res, entities_old as ents
 
 
 # Creating an empty world using parameters for 
