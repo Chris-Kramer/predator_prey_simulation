@@ -1,6 +1,7 @@
 import os
 import sys
 import config_menus as cm
+import typing
 
 sys.path.append(os.path.join("..", "..")) # For main menu
 sys.path.append(os.path.join("..", "classes")) # For classes
@@ -8,7 +9,7 @@ sys.path.append(os.path.join("..", "classes")) # For classes
 import parameters
 import foxes_and_rabbits
 
-def advanced_menu(sim_parameters):
+def advanced_menu(sim_parameters: parameters.Simulation) -> None:
     """Display advanced menu
         This function displays the advanced menu and activates submenus based on user input.
 
@@ -62,6 +63,3 @@ def advanced_menu(sim_parameters):
     else:
         print("invalid choice")
         advanced_menu(sim_parameters)
-        
-if __name__ == "__main__":
-    pass

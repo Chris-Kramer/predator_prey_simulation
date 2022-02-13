@@ -2,15 +2,16 @@ import os, sys
 
 sys.path.append(os.path.join("..", "..")) # For main menu
 sys.path.append(os.path.join("..", "classes")) # For classes
-import foxes_and_rabbits, reporting
+import foxes_and_rabbits, reporting, parameters,results
+import typing
 
-def reporting_menu(params, sim_results):
+def reporting_menu(params: parameters.Simulation, sim_results: results.SimulationStats) -> None:
     """reporting_menu.
 This function displays the menu for reporting and summarizes results from the simulation.
 The module reporting is a mock implementation.
 Parameters
 --------------
-sim_results: The return values from the function "run" in the module "simulation" (currently only a mock implementation) 
+sim_results: The return values from the function "run" in the module "simulation"
 params: An instance of the class "Simulation" from the module "parameters"
 Return
 --------------
@@ -63,6 +64,3 @@ Pick an option from above:
     else:
         print("input not valid")
         reporting_menu(params, sim_results)
-        
-if __name__ == '__main__':
-    pass

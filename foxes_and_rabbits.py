@@ -1,6 +1,7 @@
 import os
 import sys
 import time
+import typing
 
 # Look for modules in other folders 
 sys.path.append(os.path.join("Modules", "classes"))
@@ -37,7 +38,7 @@ def ascii_text():
 
 
 # Defining a function to display simulation parameters
-def display_parameters(params):
+def display_parameters(params: parameters.Simulation) -> None:
     """
     Display Parameters Function.
     
@@ -63,7 +64,7 @@ Execution Method: {params.execution} \n''')
 
 
 # Defining the quick setup menu:
-def quick_setup(params):
+def quick_setup(params: parameters.Simulation) -> None:
     """
     Quick-Setup Function (menu).
     
@@ -192,7 +193,7 @@ def quick_setup(params):
         
                 
 # Main menu is defined:
-def configuration(params):
+def configuration(params: parameters.Simulation) -> None:
     """
     Configuration function (menu).
     

@@ -3,7 +3,7 @@ import os
 sys.path.append(os.path.join("..", "classes"))
 from results import SimulationStats
 from matplotlib import pyplot as plt
-
+import numpy as np
 
 def print_summary(results: SimulationStats) -> None:
   """
@@ -63,18 +63,18 @@ def print_summary(results: SimulationStats) -> None:
   # Row 2
   step_fewest_foxes = min(fox_stats.size_per_step)
   step_fewest_rabbits = min(rabbit_stats.size_per_step)
-  __print_row(" min", str(step_fewest_foxes), str(step_fewest_rabbits),
+  __print_row(" min. energy", str(step_fewest_foxes), str(step_fewest_rabbits),
               str(step_fewest_foxes + step_fewest_rabbits))
   # Row 3
   step_most_foxes = max(fox_stats.size_per_step)
   step_most_rabbits = max(rabbit_stats.size_per_step)
-  __print_row(" max", str(step_most_foxes), str(step_most_rabbits),
+  __print_row(" max. energy", str(step_most_foxes), str(step_most_rabbits),
               str(step_most_foxes + step_most_rabbits))
   # Row 4
   avg_foxes = round(sum(fox_stats.size_per_step)/len(fox_stats.size_per_step), 2)
   avg_rabbits = round(sum(rabbit_stats.size_per_step)/len(rabbit_stats.size_per_step), 2)
   avg_total = round(avg_foxes + avg_rabbits, 2)
-  __print_row(" avg", str(avg_foxes), str(avg_rabbits),
+  __print_row(" avg. energy", str(avg_foxes), str(avg_rabbits),
               str(avg_total))        
     
   # Line break
@@ -101,13 +101,48 @@ def plot_pop_size(results: SimulationStats) -> None:
   """
   Plots population sizes against time. 
   """
-  pass
+  # Plot
+  plt.figure()
+  combined_pop = [r_size + f_size for r_size, f_size in zip(results.rabbits.size_per_step, results.foxes.size_per_step)]
+  plt.plot(results.rabbits.size_per_step, label = "Rabbits", color="cyan")
+  plt.plot(results.foxes.size_per_step, label = "Foxes", color="orange")
+  plt.plot(combined_pop, label = "Combined population", color = "green")
+  # Legend and labels
+  plt.legend()
+  plt.ylabel("Population Size")
+  plt.xlabel("Simulation Step")
+  plt.title("Population Size pr. step")
+  plt.show()
 
 def plot_lifespan(results: SimulationStats) -> None:
   """
   Plots lifespans across population idividuals. 
   """
-  pass
+   # Plot
+  fig, (ax1, ax2) = plt.subplots(2,1)
+  fig.suptitle('Lifespan Foxes and Rabbits')
+
+  # Rabbits plot
+  bin_r = np.arange(0, max(results.rabbits.age_at_death) + 1) + 0.5
+  # Plot and ticks
+  ax1.hist(results.rabbits.age_at_death, bins = bin_r, ec="grey", color="cyan")
+  ax1.set_xticks(range(max(results.rabbits.age_at_death) + 1))
+  # Labels and title
+  ax1.set_ylabel("Frequency")
+  ax1.title.set_text("Rabbits")
+
+  # Foxes plot
+  bin_f = np.arange(0, max(results.foxes.age_at_death) + 1) + 0.5
+  # Plot and ticks
+  ax2.hist(results.foxes.age_at_death, bins = bin_f, ec="grey", color="orange")
+  ax2.set_xticks(range(max(results.foxes.age_at_death) + 1))
+  # Labels and title
+  ax2.set_ylabel("Frequency")
+  ax2.set_xlabel("Age at death")
+  ax2.title.set_text("Foxes")
+  plt.show()
+
+  
 
 def plot_energy(results: SimulationStats) -> None:
   """
@@ -116,9 +151,9 @@ def plot_energy(results: SimulationStats) -> None:
 
   #Plot
   plt.figure()
-  plt.plot(results.foxes.avg_energy_per_step, label = "Foxes")
-  plt.plot(results.rabbits.avg_energy_per_step, label = "Rabbits")
-  plt.plot(results.avg_energy_per_step, label = "Total")
+  plt.plot(results.foxes.avg_energy_per_step, label = "Foxes", color="orange")
+  plt.plot(results.rabbits.avg_energy_per_step, label = "Rabbits", color="cyan")
+  plt.plot(results.avg_energy_per_step, label = "Total", color = "green")
   # Legend and labels
   plt.legend()
   plt.ylabel("Average Energy")
@@ -142,28 +177,9 @@ def plot_kills(results: SimulationStats) -> None:
   plt.ylabel("South <---------------> North")
   plt.xlabel("West <---------------> East")
   
-  # Ticks - removing them
+  # Ticks - remove them
   plt.xticks(ticks = [])
   plt.yticks(ticks = [])
-  
-  # Annotate each cell with coordinates
-  y_coord = 0.5 # Internal representation: starting from 0.5 so we write in the center of each cell
-  ns_pos = len(results.kills_per_patch) # External representation for North-South is opposite direction
-  for row in results.kills_per_patch:
-    x_coord = 0.5 # For West-East the external and internal representation follow the same direction
-    for patch in row:
-      plt.text(y = y_coord, x = x_coord, # Internal coordinates
-               s = f"({str(int(ns_pos))}, {str(int(x_coord + 0.5))})", # External representation
-               fontsize = "xx-small", # Size of each coordinate text
-               horizontalalignment = "center",
-               verticalalignment = "center")
-      x_coord += 1
-    y_coord += 1
-    ns_pos -= 1
-
-  # Show the plot in full-screen
-  figManager = plt.get_current_fig_manager()
-  figManager.window.showMaximized()
   plt.show()
 
 if __name__ == "__main__":

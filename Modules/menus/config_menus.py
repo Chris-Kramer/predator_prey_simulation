@@ -1,13 +1,14 @@
 import advanced_menu as am
 import sys
 import os
+from typing import List
 
 sys.path.append(os.path.join("..", "classes"))
 import parameters
 
 
 #---------- Sub-menu: configure world ----------
-def configure_world(sim_parameters):
+def configure_world(sim_parameters: parameters.Simulation) -> None:
     """Configure world parameters. 
     This function displays the menu for configuring the world parameter and changes their values based on user input.
 
@@ -90,7 +91,7 @@ def configure_world(sim_parameters):
 
         
 # ------ Sub-sub-menu: select shape ------
-def select_shape(sim_parameters):
+def select_shape(sim_parameters: parameters.Simulation) -> None:
     """Configure shape
     This function displays a menu which lets the user choose the shape of the world (toroid or island).
 
@@ -140,7 +141,7 @@ def select_shape(sim_parameters):
 
         
 #---------- Submenu: configure species ----------
-def configure_species(sim_parameters, species):
+def configure_species(sim_parameters: parameters.Simulation, species: str) -> None:
     """Configure species
     This function displays a menu, which lets the user configure the parameters of a given population species in the simulation.
 
@@ -291,7 +292,7 @@ def configure_species(sim_parameters, species):
 
 
 #---------- Sub-menu: configure execution ----------
-def configure_execution(sim_parameters):
+def configure_execution(sim_parameters: parameters.Simulation) -> None:
     """Configure execution
     This function displays a menu, which lets the user configure the execution parameters.
 
@@ -364,7 +365,7 @@ def configure_execution(sim_parameters):
 
         
 #----- Sub-sub-menu: select mode ------
-def select_mode(sim_parameters):
+def select_mode(sim_parameters: parameters.Simulation) -> None:
     """Configure simulation mode
     This function displays a menu, which lets the user select how the simulation is executed (batch or visual).
 
@@ -411,6 +412,3 @@ def select_mode(sim_parameters):
     else:
         print("invalid input")
         select_mode(sim_parameters)
-
-if __name__ == "__main__":
-    pass

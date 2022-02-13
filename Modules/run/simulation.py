@@ -4,13 +4,14 @@ Authors: @Merete, @Christoffer, @Andreas
 import os
 import sys
 import random
+from typing import Any, Tuple
 
 sys.path.append(os.path.join("..", "classes"))
-import parameters, visualiser, results as res, entities_old as ents
+import parameters, visualiser, results as res, entities as ents
 
 
 # Creating an empty world using parameters for 
-def create_world(params):
+def create_world(params: parameters.Simulation) -> list[list[0]]:
     """Create an empty world for entities to later be filled in.
     
     Parameters
@@ -24,11 +25,12 @@ def create_world(params):
     field = 0 # Zero for empty field 
     nsl = params.world.north_south_length
     wel = params.world.west_east_length
+    
     return [[field for col in range(wel)] for row in range(nsl)]
 
 
 # Filling the empty world with patches
-def fill_world(empty_world):
+def fill_world(empty_world: list[list[0]]) -> None:
     """Fill an empty world with Patches
     
     Parameters
@@ -49,7 +51,7 @@ def fill_world(empty_world):
 
         
 # Get random field in world
-def get_rand_field(world):
+def get_rand_field(world: list[list[ents.Patch]]) -> tuple:
     """Returns a random field from the world and its coordinates.
 
     Parameters
@@ -68,7 +70,7 @@ def get_rand_field(world):
 
 
 # Filling the patches with entities
-def populate_world(params, world):
+def populate_world(params: parameters.Simulation, world: list[list[ents.Patch]]) -> None:
     """Function to populate an empty world with patches
 
     Parameters
@@ -81,7 +83,7 @@ def populate_world(params, world):
     No return value 
     """
     # Helper function for creating new animals
-    def _create_animals(population, world):
+    def _create_animals(population: str, world: list[list[ents.Patch]]) -> None:
         coords_animals = []
         for animal in range(population.initial_size):
             # Get empty coordinate for animal
@@ -100,7 +102,10 @@ def populate_world(params, world):
     rabbits = params.rabbits
     _create_animals(rabbits, world)
 
-def _nearest_coords(world, ns_pos, we_pos, movement = "queen"):
+def _nearest_coords(world: list[list[ents.Patch]],
+                    ns_pos: int,
+                    we_pos: int,
+                    movement: str) -> list[ents.Patch]:
     """Get neighbour fields according to specified coordinates
     This function gets all  neighbours from the world according to north south and west east coordinates.  
     Neighbour fields can be chosen according to rook, bishop, or queen movement. 
@@ -116,7 +121,7 @@ def _nearest_coords(world, ns_pos, we_pos, movement = "queen"):
     ns_pos: The north south position
     we_pos: The west east position
     movement: Movement that defines neighbours can be either
-        - Queen (Default): "queen" or "q"
+        - Queen: "queen" or "q"
         - Rook: "rook" or "r"
         - Bishop: "bishop" or "b"
     
@@ -150,7 +155,10 @@ def _nearest_coords(world, ns_pos, we_pos, movement = "queen"):
 
     return near_fields
 
-def get_near_by_fields(animal, world, params, movement = "q"):
+def get_near_by_fields(animal: ents.Animal, 
+                       world: list[list[ents.Patch]], 
+                       params: parameters.Simulation, 
+                       movement: str = "q") -> list[ents.Patch]:
     """ Get nearby fields of an animal according to specified movement neighbours.
     This function primarily handles indeces and uses a semi-private function for getting the correct fields.
     
@@ -193,7 +201,7 @@ def get_near_by_fields(animal, world, params, movement = "q"):
         return _nearest_coords(world, ns_pos, we_pos, movement)
     
     
-def reproduce_animal(animal, nearby_fields):
+def reproduce_animal(animal: ents.Animal, nearby_fields: list[ents.Patch]) -> bool:
     """ Test if the animal can reproduce according to the geographical and internal rules of reproduction.
     If the animal can reproduce it will activate the animal.reproduce() To a random field.
     Otherwise it wont do anything. It will return a Bool indicating whether it reproduced or not and a newborn or None.
@@ -222,7 +230,7 @@ def reproduce_animal(animal, nearby_fields):
     return False, None # This will only execute if the above if-statements evaluates to False
 
 
-def move_animal(animal, nearby_fields):
+def move_animal(animal: ents.Animal, nearby_fields: list[ents.Patch]) -> None:
     """Move animal to random valid empty field nearby if it is possible
 
     Parameters
@@ -242,7 +250,11 @@ def move_animal(animal, nearby_fields):
         animal.move_to(rand_empty_field)
 
         
-def _collect_stats(animals, newborns, population, pop_stats, sim_stats):
+def _collect_stats(animals: ents.Animal,
+                   newborns: list[ents.Animal],
+                   population: parameters.Population,
+                   pop_stats: res.PopulationStats,
+                   sim_stats: res.SimulationStats) -> None:
     """ This function collects statistics and updates the relevant classes
 
     Parameters
@@ -300,9 +312,12 @@ def _collect_stats(animals, newborns, population, pop_stats, sim_stats):
         pop_stats.avg_energy_per_step.append(0)
 
 
-def update_entities(world, params,
-                    r_pop_stats, f_pop_stats,
-                    sim_stats, movement):   
+def update_entities(world: list[list[ents.Patch]], 
+                    params: parameters.Simulation,
+                    r_pop_stats: res.PopulationStats, 
+                    f_pop_stats: res.PopulationStats,
+                    sim_stats: res.SimulationStats, 
+                    movement: str) -> None:   
     """ This function updates each entity in the world and collects relevant statistics
 
     Parameters
@@ -311,6 +326,7 @@ def update_entities(world, params,
     params: An instance of the class "Simulation" from the module "parameters"
     r_pop_stats: An instance of the class "PopulationStats" from the module "results" for rabbits
     f_pop_stats: An instance of the class "PopulationStats" from the module "results" for foxes
+    sim_stats: An instance of the class "SimulationStats" form the module "results"
     movement: Movement that defines neighbours can be either
         - Queen (Default): "queen" or "q"
         - Rook: "rook" or "r"
@@ -320,14 +336,14 @@ def update_entities(world, params,
     ---------
     No return value
     """
-
     rabbits = []
     newborn_rabbits = []
     foxes = []
     newborn_foxes = []
+    alive_animals = True
+
     for row in world:
         for patch in row:
-            kills = 0
             patch.tick()
             for animal in patch.animals():          
                 #Append animals
@@ -364,8 +380,17 @@ def update_entities(world, params,
                    population = params.foxes,
                    pop_stats = f_pop_stats,
                    sim_stats = sim_stats)
+    
+    # Check if animals are dead
+    if (len(rabbits) == 0 
+        and len(foxes) == 0
+        and len(newborn_rabbits) == 0
+        and len(newborn_rabbits) == 0):
+        alive_animals = False
+    
+    return alive_animals
 
-def run(params):
+def run(params: parameters.Simulation) -> res.SimulationStats:
     """Runs the simulation according to the specified parameters collects statistics
 
     Parameters
@@ -439,18 +464,17 @@ def run(params):
     
     # Run simulation
     vis.start()
-    for i in range(params.execution.max_steps):
-        vis.update(i)
-        update_entities(world, params,
-                        r_pop_stats, f_pop_stats,
-                        sim_stats, movement)
+    step = 0
+    alive_animals = True
+    while alive_animals and step <= params.execution.max_steps:
+        vis.update(step)
+        alive_animals = update_entities(world, params,
+                                        r_pop_stats, f_pop_stats,
+                                        sim_stats, movement)
+        step += 1
     vis.stop()
 
     # Calculate and save total average energy from both populations
     sim_stats.avg_energy_per_step = [f_pop_stats.avg_energy_per_step[i] + r_pop_stats.avg_energy_per_step[i]
-                                     for i in range(params.execution.max_steps)]
+                                     for i in range(step)]
     return sim_stats
-
-if __name__ == '__main__':
-    pass
-    
